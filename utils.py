@@ -317,7 +317,9 @@ async def get_shortlink(link):
     except Exception as e:
         logger.error(f"Safelink generation error: {e}")
         return link  # fallback to original if any error
-# from Midukki-RoBoT
+# from Midukki-RoBo
+print("Generated Safelink:", safelink_url)
+
 def extract_time(time_val):
     if any(time_val.endswith(unit) for unit in ("s", "m", "h", "d")):
         unit = time_val[-1]
