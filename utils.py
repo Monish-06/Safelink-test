@@ -304,27 +304,20 @@ def get_time(seconds):
     return result
     
 async def get_shortlink(link):
-    url = f"{SHORT_URL}"
-    params = {'api': SHORT_API, 'url': link}
+import urllib.parse
+
+async def get_shortlink(link):
     try:
-        logger.debug(f"Requesting shortlink for: {link}")
-        logger.debug(f"API URL: {url}")
-        logger.debug(f"Params: {params}")
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, params=params, raise_for_status=True, ssl=False) as response:
-                data = await response.json()
-                logger.debug(f"API response: {data}")
-
-                if data["status"] == "success":
-                    return data['shortenedUrl']
-                else:
-                    logger.error(f"API error message: {data['message']}")
-                    return link
+        # Encode the original link for use in the safelink URL
+        encoded_link = urllib.parse.quote(link, safe='')
+        
+        # Create the full safelink URL (only safelink1 used here)
+        safelink_url = f"https://moxibeatz.fun/p/safelink1.html?url={encoded_link}"
+        
+        return safelink_url
     except Exception as e:
-        logger.exception("Exception occurred while shortening link")
-        return link
-
+        logger.error(f"Safelink generation error: {e}")
+        return link  # fallback to original if any error
 # from Midukki-RoBoT
 def extract_time(time_val):
     if any(time_val.endswith(unit) for unit in ("s", "m", "h", "d")):
