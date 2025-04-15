@@ -311,7 +311,7 @@ async def get_shortlink(link):
         encoded_link = base64.urlsafe_b64encode(link.encode()).decode()
 
         # Construct the safelink URL with the encoded link
-        safelink_url = f"https://moxibeatz.fun/p/safelink1.html?url={encoded_link}"
+        safelink_url = f"https://moxibeatz.fun/p/1.html?url={encoded_link}"
         return safelink_url
     except Exception as e:
         logger.error(f"Safelink generation error: {e}")
