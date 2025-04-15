@@ -302,23 +302,20 @@ def get_time(seconds):
             period_value, seconds = divmod(seconds, period_seconds)
             result += f'{int(period_value)}{period_name}'
     return result
-    
-import urllib.parse
+
+import base64
 
 async def get_shortlink(link):
     try:
-        # Encode the original link for use in the safelink URL
-        encoded_link = urllib.parse.quote(link, safe='')
-        
-        # Create the full safelink URL (only safelink1 used here)
+        # Encode the original link to Base64
+        encoded_link = base64.urlsafe_b64encode(link.encode()).decode()
+
+        # Construct the safelink URL with the encoded link
         safelink_url = f"https://moxibeatz.fun/p/safelink1.html?url={encoded_link}"
-        
         return safelink_url
     except Exception as e:
         logger.error(f"Safelink generation error: {e}")
-        return link  # fallback to original if any error
-# from Midukki-RoBo
-print("Generated Safelink:", safelink_url)
+        return link
 
 def extract_time(time_val):
     if any(time_val.endswith(unit) for unit in ("s", "m", "h", "d")):
