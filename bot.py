@@ -5,7 +5,7 @@ import time
 def keep_alive():
     while True:
         try:
-            requests.get("https://scornful-andreana-moxi35-c66f799a.koyeb.app/")
+            requests.get("https://famous-addi-moxibeatz21-7ed6f21b.koyeb.app/")
         except:
             pass
         time.sleep(90)  # Ping every 5 minutes
