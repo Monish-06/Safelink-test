@@ -304,21 +304,26 @@ def get_time(seconds):
     return result
     
 async def get_shortlink(link):
-    url = f'{SHORT_URL}'
+    url = f"{SHORT_URL}/shorten.php"
     params = {'api': SHORT_API, 'url': link}
     try:
+        logger.debug(f"Requesting shortlink for: {link}")
+        logger.debug(f"API URL: {url}")
+        logger.debug(f"Params: {params}")
+
         async with aiohttp.ClientSession() as session:
             async with session.get(url, params=params, raise_for_status=True, ssl=False) as response:
                 data = await response.json()
+                logger.debug(f"API response: {data}")
+
                 if data["status"] == "success":
                     return data['shortenedUrl']
                 else:
-                    logger.error(f"Error: {data['message']}")
+                    logger.error(f"API error message: {data['message']}")
                     return link
     except Exception as e:
-        logger.error(e)
+        logger.exception("Exception occurred while shortening link")
         return link
-
 
 # from Midukki-RoBoT
 def extract_time(time_val):
