@@ -1,3 +1,15 @@
+import logging
+
+# Set up basic logging configuration
+logging.basicConfig(
+    level=logging.DEBUG,  # You can change this to INFO or ERROR later
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+logger = logging.getLogger(__name__)
+
+
+
 import threading
 import requests
 import time
