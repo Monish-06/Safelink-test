@@ -303,7 +303,6 @@ def get_time(seconds):
             result += f'{int(period_value)}{period_name}'
     return result
     
-async def get_shortlink(link):
 import urllib.parse
 
 async def get_shortlink(link):
