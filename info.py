@@ -48,7 +48,7 @@ WELCOM_PIC = environ.get("WELCOM_PIC", "https://envs.sh/GH_.jpg")
 WELCOM_TEXT = environ.get("WELCOM_TEXT", script.WELCOM_TEXT)
 PMFILTER = is_enabled(environ.get('PMFILTER', "False"), False)
 G_FILTER = is_enabled(environ.get("G_FILTER", "False"), False)
-BUTTON_LOCK = is_enabled(environ.get("BUTTON_LOCK", "True"), True)
+BUTTON_LOCK = True
 RemoveBG_API = environ.get("RemoveBG_API", "")
 
 # url shortner
