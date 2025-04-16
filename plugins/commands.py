@@ -212,8 +212,7 @@ import asyncio
 async def auto_delete_media(client: Client, message: Message):
     await asyncio.sleep(5)  # wait 10 minutes
     try:
-        await message.delete()  # 1. DELETE the file FIRST
-        await asyncio.sleep(1)  # optional: small sleep to ensure deletion happens cleanly
+        await message.delete()  
         await client.send_message(
             chat_id=message.chat.id,
             text="✅ Your file was successfully deleted after 10 minutes!"
