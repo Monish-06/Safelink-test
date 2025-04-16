@@ -213,6 +213,10 @@ async def auto_delete_media(client: Client, message: Message):
     await asyncio.sleep(600)
     try:
         await message.delete()
+        await client.send_message(
+            chat_id=message.chat.id,
+            text="Your requested file was automatically deleted after 10 minutes. you can request the file again here --> @moxi_movies_grp"
+        )
     except Exception as e:
         print(f"Error deleting message: {e}")
 
