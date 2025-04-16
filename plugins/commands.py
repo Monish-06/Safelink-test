@@ -12,7 +12,16 @@ from database.connections_mdb import active_connection
 
 logger = logging.getLogger(__name__)
 BATCH_FILES = {}
+from pyrogram.types import Message
+from pyrogram.enums import ChatType
 
+@Client.on_message(filters.private & filters.media)
+async def auto_delete_media(client, message: Message):
+    await asyncio.sleep(10)
+    try:
+        await message.delete()
+    except Exception as e:
+        print(f"Error deleting message: {e}")
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
