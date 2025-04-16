@@ -219,7 +219,9 @@ async def auto_delete_media(client: Client, message: Message):
             text="✅ Your file was successfully deleted after 10 minutes!"
         )
     except Exception as e:
-        print(f"Error deleting message: {e}")@Client.on_message(filters.command('channel') & filters.user(ADMINS))
+        print(f"Error deleting message: {e}")
+        
+@Client.on_message(filters.command('channel') & filters.user(ADMINS))
 async def channel_info(bot, message):
     if isinstance(CHANNELS, (int, str)): channels = [CHANNELS]
     elif isinstance(CHANNELS, list): channels = CHANNELS
