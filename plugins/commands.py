@@ -210,7 +210,7 @@ import asyncio
 
 @Client.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.photo | filters.animation | filters.voice))
 async def auto_delete_media(client: Client, message: Message):
-    await asyncio.sleep(5)  # wait 10 minutes
+    await asyncio.sleep(600)  # wait 10 minutes
     try:
         await message.delete()  
     except Exception as e:
