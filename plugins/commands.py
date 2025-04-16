@@ -210,17 +210,16 @@ import asyncio
 
 @Client.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.photo | filters.animation | filters.voice))
 async def auto_delete_media(client: Client, message: Message):
-    await asyncio.sleep(600)
+    await asyncio.sleep(5)  # wait 10 minutes
     try:
-        await message.delete()
+        await message.delete()  # 1. DELETE the file FIRST
+        await asyncio.sleep(1)  # optional: small sleep to ensure deletion happens cleanly
         await client.send_message(
             chat_id=message.chat.id,
-            text="Your requested file was automatically deleted after 10 minutes. you can request the file again here --> @moxi_movies_grp"
+            text="✅ Your file was successfully deleted after 10 minutes!"
         )
     except Exception as e:
-        print(f"Error deleting message: {e}")
-
-@Client.on_message(filters.command('channel') & filters.user(ADMINS))
+        print(f"Error deleting message: {e}")@Client.on_message(filters.command('channel') & filters.user(ADMINS))
 async def channel_info(bot, message):
     if isinstance(CHANNELS, (int, str)): channels = [CHANNELS]
     elif isinstance(CHANNELS, list): channels = CHANNELS
