@@ -5,7 +5,7 @@ Mʏ Nᴀᴍᴇ Is {bot}.
 
 I Cᴀɴ Pʀᴏᴠɪᴅᴇ Mᴏᴠɪᴇ Fᴏʀ Yᴏᴜ Jᴜsᴛ Aᴅᴅ Mᴇ Iɴ Yᴏᴜʀ Gʀᴏᴜᴘ Oʀ Jᴏɪɴ Oᴜʀ Gʀᴏᴜᴘ</b>"""
 
-    custom_caption = """Join @moxi_movies 
+    CUSTOM_CAPTION = """Join @moxi_movies 
     Files will be automatically deleted after 10minutes due to copyright problems .
     <b>Save</b> it or <b>forward</b> it to your friend."""
     
