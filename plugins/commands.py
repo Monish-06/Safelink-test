@@ -12,16 +12,7 @@ from database.connections_mdb import active_connection
 
 logger = logging.getLogger(__name__)
 BATCH_FILES = {}
-from pyrogram.types import Message
-from pyrogram.enums import ChatType
 
-@Client.on_message(filters.private & filters.media)
-async def auto_delete_media(client, message: Message):
-    await asyncio.sleep(10)
-    try:
-        await message.delete()
-    except Exception as e:
-        print(f"Error deleting message: {e}")
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
@@ -212,7 +203,18 @@ async def start(client, message):
         f_caption = f"{files.file_name}"
     await client.send_cached_media(chat_id=message.from_user.id, file_id=file_id, caption=f_caption, protect_content=True if pre == 'filep' else False,)
                     
+from pyrogram import Client, filters
+from pyrogram.types import Message
+from pyrogram.enums import ChatType
+import asyncio
 
+@Client.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.photo | filters.animation | filters.voice))
+async def auto_delete_media(client: Client, message: Message):
+    await asyncio.sleep(10)
+    try:
+        await message.delete()
+    except Exception as e:
+        print(f"Error deleting message: {e}")
 
 @Client.on_message(filters.command('channel') & filters.user(ADMINS))
 async def channel_info(bot, message):
