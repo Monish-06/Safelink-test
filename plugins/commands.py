@@ -201,30 +201,29 @@ async def start(client, message):
             f_caption=f_caption
     if f_caption is None:
         f_caption = f"{files.file_name}"
-sent_msg = await client.send_cached_media(
-    chat_id=message.from_user.id,
-    file_id=file_id,
-    caption=f_caption,
-    protect_content=True if pre == 'filep' else False,
-)
+        sent_msg = await client.send_cached_media(
+        chat_id=message.from_user.id,
+        file_id=file_id,
+        caption=f_caption,
+        protect_content=True if pre == 'filep' else False,
+    )
 
-# Auto-delete after 10 minutes with follow-up
-async def auto_delete(sent, user_id):
-    await asyncio.sleep(600)
-    try:
-        await sent.delete()
-        # After deletion, notify the user with a button
-        await client.send_message(
-            user_id,
-            text="⛔️ This file has been deleted to prevent copyright issues.",
-            reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton("🔁 Request Again", url="https://t.me/moxi_movies_grp")
-            ]])
-        )
-    except Exception as e:
-        print(f"[AutoDelete] Error: {e}")
+    # Auto-delete the sent file after 10 minutes
+    async def auto_delete(sent, user_id):
+        await asyncio.sleep(600)  # 10 minutes
+        try:
+            await sent.delete()
+            await client.send_message(
+                chat_id=user_id,
+                text="⛔️ This file has been deleted to avoid copyright issues.",
+                reply_markup=InlineKeyboardMarkup([[
+                    InlineKeyboardButton("🔁 Request Again", url="https://t.me/moxi_movies_grp")
+                ]])
+            )
+        except Exception as e:
+            print(f"[AutoDelete] Failed: {e}")
 
-asyncio.create_task(auto_delete(sent_msg, message.from_user.id))                    
+    asyncio.create_task(auto_delete(sent_msg, message.from_user.id))            
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.enums import ChatType
