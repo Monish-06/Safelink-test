@@ -223,6 +223,136 @@ if CUSTOM_FILE_CAPTION:
             try:
                 await msg.delete()
                 await client.send_message(
+@Client.on_message(filters.command("start") & filters.incoming)
+async def start(client, message):
+    if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+        buttons = [[
+            InlineKeyboardButton('📢 Uᴩᴅᴀᴛᴇꜱ 📢', url=f'https://t.me/{SUPPORT_CHAT}')
+        ],[
+            InlineKeyboardButton('ℹ️ Hᴇʟᴩ ℹ️', url=f"https://t.me/{temp.U_NAME}?start=help")
+        ]]
+        await message.reply(
+            START_MESSAGE.format(
+                user=message.from_user.mention if message.from_user else message.chat.title,
+                bot=client.mention),
+            reply_markup=InlineKeyboardMarkup(buttons),
+            disable_web_page_preview=True
+        )
+        await asyncio.sleep(2)
+        if not await db.get_chat(message.chat.id):
+            total = await client.get_chat_members_count(message.chat.id)
+            await client.send_message(
+                LOG_CHANNEL,
+                script.LOG_TEXT_G.format(
+                    a=message.chat.title,
+                    b=message.chat.id,
+                    c=message.chat.username,
+                    d=total,
+                    f=client.mention,
+                    e="Unknown"
+                )
+            )
+            await db.add_chat(message.chat.id, message.chat.title, message.chat.username)
+        return
+
+    if not await db.is_user_exist(message.from_user.id):
+        await db.add_user(message.from_user.id, message.from_user.first_name)
+        await client.send_message(
+            LOG_CHANNEL,
+            script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention, message.from_user.username, temp.U_NAME)
+        )
+
+    if len(message.command) != 2:
+        buttons = [[
+            InlineKeyboardButton("ʀᴇǫᴜᴇsᴛ ᴍᴏᴠɪᴇs ʜᴇʀᴇ", url="https://t.me/moxi_movies_grp")
+        ],[
+            InlineKeyboardButton("Sᴇᴀʀᴄʜ 🔎", switch_inline_query_current_chat=''),
+            InlineKeyboardButton("Cʜᴀɴɴᴇʟ 🔈", url="https://t.me/mkn_bots_updates")
+        ],[
+            InlineKeyboardButton("Hᴇʟᴩ 🕸️", callback_data="help"),
+            InlineKeyboardButton("Aʙᴏᴜᴛ ✨", callback_data="about")
+        ]]
+        m = await message.reply_sticker("CAACAgUAAxkBAAEBvlVk7YKnYxIHVnKW2PUwoibIR2ygGAACBAADwSQxMYnlHW4Ls8gQHgQ")
+        await asyncio.sleep(2)
+        await message.reply_photo(
+            photo=random.choice(PICS),
+            caption=START_MESSAGE.format(user=message.from_user.mention, bot=client.mention),
+            reply_markup=InlineKeyboardMarkup(buttons),
+            parse_mode=enums.ParseMode.HTML
+        )
+        return await m.delete()
+
+    data = message.command[1]
+    try:
+        pre, file_id = data.split('_', 1)
+    except:
+        file_id = data
+        pre = ""
+
+    files_ = await get_file_details(file_id)
+    if not files_:
+        try:
+            pre, file_id = ((base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))).decode("ascii")).split("_", 1)
+        except:
+            return await message.reply('NO SUCH FILE EXIST...')
+        try:
+            msg = await client.send_cached_media(
+                chat_id=message.from_user.id,
+                file_id=file_id,
+                protect_content=True if pre == 'filep' else False,
+            )
+            filetype = msg.media
+            file = getattr(msg, filetype)
+            title = file.file_name
+            size = get_size(file.file_size)
+            f_caption = f"<code>{title}</code>"
+            if CUSTOM_FILE_CAPTION:
+                try:
+                    f_caption = CUSTOM_FILE_CAPTION.format(
+                        mention=message.from_user.mention,
+                        file_name=title or '',
+                        file_size=size or '',
+                        file_caption=''
+                    )
+                except:
+                    return
+            return await msg.edit_caption(f_caption)
+        except:
+            return await message.reply('NO SUCH FILE EXIST...')
+
+    files = files_[0]
+    title = files.file_name
+    size = get_size(files.file_size)
+    f_caption = files.caption
+
+    if CUSTOM_FILE_CAPTION:
+        try:
+            f_caption = CUSTOM_FILE_CAPTION.format(
+                mention=message.from_user.mention,
+                file_name=title or '',
+                file_size=size or '',
+                file_caption=f_caption or ''
+            )
+        except Exception as e:
+            logger.exception(e)
+
+    if f_caption is None:
+        f_caption = title
+
+    # Send file and handle auto-delete
+    try:
+        sent_msg = await client.send_cached_media(
+            chat_id=message.from_user.id,
+            file_id=file_id,
+            caption=f_caption,
+            protect_content=True if pre == 'filep' else False,
+        )
+
+        async def delete_later(msg):
+            await asyncio.sleep(600)
+            try:
+                await msg.delete()
+                await client.send_message(
                     message.from_user.id,
                     "⛔️ This file has been deleted to avoid copyright issues.",
                     reply_markup=InlineKeyboardMarkup([[
@@ -236,7 +366,7 @@ if CUSTOM_FILE_CAPTION:
 
     except Exception as e:
         logger.error(f"File send failed: {e}")
-        await message.reply("❌ Unable to send the file. It might be deleted or inaccessible.")  
+        await message.reply("❌ Unable to send the file. It might be deleted or inaccessible.")
 
 
 from pyrogram import Client, filters
