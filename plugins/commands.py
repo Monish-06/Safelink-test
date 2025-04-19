@@ -206,7 +206,7 @@ if CUSTOM_FILE_CAPTION:
         logger.exception(e)
 
     if f_caption is None:
-    f_caption = title
+        f_caption = title
 
 # Send file and handle auto-delete
     try:
