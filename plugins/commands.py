@@ -205,38 +205,40 @@ if CUSTOM_FILE_CAPTION:
     except Exception as e:
         logger.exception(e)
 
-if f_caption is None:
+    if f_caption is None:
     f_caption = title
 
 # Send file and handle auto-delete
-try:
-    sent_msg = await client.send_cached_media(
-        chat_id=message.from_user.id,
-        file_id=file_id,
-        caption=f_caption,
-        protect_content=True if pre == 'filep' else False,
-    )
+    try:
+        sent_msg = await client.send_cached_media(
+            chat_id=message.from_user.id,
+            file_id=file_id,
+            caption=f_caption,
+            protect_content=True if pre == 'filep' else False,
+        )
 
     # Schedule auto-delete after 10 minutes
-    async def delete_later(msg):
-        await asyncio.sleep(600)
-        try:
-            await msg.delete()
-            await client.send_message(
-                message.from_user.id,
-                "⛔️ This file has been deleted to avoid copyright issues.",
-                reply_markup=InlineKeyboardMarkup([[
-                    InlineKeyboardButton("🔁 Request Again", url="https://t.me/moxi_movies_grp")
-                ]])
-            )
-        except Exception as e:
-            print(f"[AutoDelete] Error: {e}")
+        async def delete_later(msg):
+            await asyncio.sleep(600)
+            try:
+                await msg.delete()
+                await client.send_message(
+                    message.from_user.id,
+                    "⛔️ This file has been deleted to avoid copyright issues.",
+                    reply_markup=InlineKeyboardMarkup([[
+                        InlineKeyboardButton("🔁 Request Again", url="https://t.me/moxi_movies_grp")
+                    ]])
+                )
+            except Exception as e:
+                print(f"[AutoDelete] Error: {e}")
 
-    asyncio.create_task(delete_later(sent_msg))
+        asyncio.create_task(delete_later(sent_msg))
 
-except Exception as e:
-    logger.error(f"File send failed: {e}")
-    await message.reply("❌ Unable to send the file. It might be deleted or inaccessible.")            
+    except Exception as e:
+        logger.error(f"File send failed: {e}")
+        await message.reply("❌ Unable to send the file. It might be deleted or inaccessible.")  
+
+
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.enums import ChatType
