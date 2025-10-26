@@ -36,5 +36,9 @@ wget
 pytz
 
 
+user_doc['active_links'][index] = {
+    "url": shortlink,
+    "nonce": random_string(8)  # short random token
+}
 
 
